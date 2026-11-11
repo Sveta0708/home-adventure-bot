@@ -97,34 +97,40 @@ def my_games(user_id):
     return rows
 
 def openai_generate(prompt):
+    api_key = os.environ["YANDEX_API_KEY"]
+    folder_id = os.environ["YANDEX_FOLDER_ID"]
+    url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
+
     body = json.dumps({
-        "model": OPENAI_MODEL,
-        "input": prompt,
-        "max_output_tokens": 1800
-    }).encode()
+        "modelUri": f"gpt://{folder_id}/yandexgpt-lite/latest",
+        "completionOptions": {
+            "stream": False,
+            "temperature": 0.7,
+            "maxTokens": "1800"
+        },
+        "messages": [
+            {"role": "user", "text": prompt}
+        ]
+    }).encode("utf-8")
+
     req = urllib.request.Request(
-        OPENAI_API,
+        url,
         data=body,
         headers={
-            "Authorization": f"Bearer {OPENAI_API_KEY}",
-            "Content-Type": "application/json"
-        }
+            "Authorization": f"Api-Key {api_key}",
+            "Content-Type": "application/json",
+            "x-folder-id": folder_id
+        },
+        method="POST"
     )
+
     with urllib.request.urlopen(req, timeout=90) as r:
-        data = json.loads(r.read().decode())
+        data = json.loads(r.read().decode("utf-8"))
 
-    if data.get("output_text"):
-        return data["output_text"].strip()
+    return data["result"]["alternatives"][0]["message"]["text"].strip()
 
-    parts = []
-    for item in data.get("output", []):
-        for c in item.get("content", []):
-            if isinstance(c, dict) and c.get("text"):
-                parts.append(c["text"])
-    text = "\n".join(parts).strip()
-    if not text:
-        raise RuntimeError("OpenAI не вернул текст.")
-    return text
+
+
 
 def make_prompt(d):
     return f"""
