@@ -9,12 +9,12 @@ import urllib.error
 from datetime import datetime
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
+
+
 DB_PATH = os.environ.get("DB_PATH", "/data/games.sqlite3")
 
 TG_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
-OPENAI_API = "https://api.openai.com/v1/responses"
+
 
 QUESTIONS = [
     ("players_type", "Кто играет?", ["👧 Только дети", "👨‍👩‍👧 Дети + взрослые", "👩 Только взрослые"]),
