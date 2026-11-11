@@ -7,7 +7,7 @@ import urllib.request
 import urllib.parse
 import urllib.error
 from datetime import datetime
-Python
+
 from pathlib import Path
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
